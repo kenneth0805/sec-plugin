@@ -1,35 +1,33 @@
-import requests
-import pandas as pd
+def get_10k_xbrl_links(self):
+    url = f"https://data.sec.gov/submissions/CIK{self.cik}.json"
+    resp = requests.get(url, headers=self.headers)
+    data = resp.json()
 
-class FinancialAgent:
-    def __init__(self, cik: str):
-        self.cik = cik.zfill(10)
-        self.headers = {
-            "User-Agent": "your_email@example.com"  # 请改成你自己的邮箱
-        }
+    filings = data["filings"]["recent"]
+    results = []
 
-    def get_10k_xbrl_links(self):
-        url = f"https://data.sec.gov/submissions/CIK{self.cik}.json"
-        resp = requests.get(url, headers=self.headers)
-        data = resp.json()
+    for i in range(len(filings["form"])):
+        if filings["form"][i] == "10-K":
+            accession = filings["accessionNumber"][i].replace("-", "")
+            filing_date = filings["filingDate"][i]
+            year = filing_date[:4]
+            xbrl_url = (
+                f"https://www.sec.gov/Archives/edgar/data/{int(self.cik)}/"
+                f"{accession}/Financial_Report.xlsx"
+            )
+            results.append({
+                "year": year,
+                "filing_date": filing_date,
+                "url": xbrl_url
+            })
 
-        filings = data["filings"]["recent"]
-        results = []
+    # 转成 DataFrame 并按年份倒序排序
+    df = pd.DataFrame(results).sort_values("year", ascending=False).reset_index(drop=True)
 
-        for i in range(len(filings["form"])):
-            if filings["form"][i] == "10-K":
-                accession = filings["accessionNumber"][i].replace("-", "")
-                filing_date = filings["filingDate"][i]
-                year = filing_date[:4]
-                xbrl_url = (
-                    f"https://www.sec.gov/Archives/edgar/data/{int(self.cik)}/"
-                    f"{accession}/Financial_Report.xlsx"
-                )
-                results.append({
-                    "year": year,
-                    "filing_date": filing_date,
-                    "url": xbrl_url
-                })
+    # 构造 {year: "year 年财报：url"} 格式
+    result_dict = {}
+    for _, row in df.iterrows():
+        result_dict[row["year"]] = f"{row['year']} 年财报：{row['url']}"
 
-        df = pd.DataFrame(results).sort_values("year", ascending=False).reset_index(drop=True)
-        return df
+    return result_dict
+
