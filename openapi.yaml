@@ -1,0 +1,25 @@
+openapi: 3.0.1
+info:
+  title: SEC Report Plugin
+  description: 查询美股公司 SEC 10-K 财报下载链接
+  version: "1.0.0"
+paths:
+  /query:
+    post:
+      summary: 查询公司财报
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_name:
+                  type: string
+      responses:
+        '200':
+          description: 成功返回财报链接
+          content:
+            text/plain:
+              schema:
+                type: string

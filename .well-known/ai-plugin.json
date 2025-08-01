@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "SEC Financial Report Finder",
+  "name_for_model": "sec_fin_report",
+  "description_for_human": "查找美股公司的 10-K 财报下载链接",
+  "description_for_model": "Returns SEC 10-K report links for a given public company name",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "http://localhost:8000/openapi.yaml"
+  },
+  "logo_url": "http://localhost:8000/logo.png",
+  "contact_email": "your_email@example.com",
+  "legal_info_url": "http://localhost:8000/legal"
+}
