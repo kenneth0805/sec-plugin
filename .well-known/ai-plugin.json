@@ -7,11 +7,10 @@
   "auth": {
     "type": "none"
   },
-  "api": {
-    "type": "openapi",
-    "url": "http://localhost:8000/openapi.yaml"
-  },
-  "logo_url": "http://localhost:8000/logo.png",
-  "contact_email": "your_email@example.com",
-  "legal_info_url": "http://localhost:8000/legal"
-}
+"api": {
+  "type": "openapi",
+  "url": "https://sec-plugin.onrender.com/openapi.yaml"
+},
+"logo_url": "https://sec-plugin.onrender.com/logo.png",
+"contact_email": "252983421@qq.com",
+"legal_info_url": "https://sec-plugin.onrender.com/legal"
