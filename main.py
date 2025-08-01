@@ -1,16 +1,14 @@
 from fastapi import FastAPI
-from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import PlainTextResponse
-from fastapi.staticfiles import StaticFiles  # ✅ 新增
+from fastapi.staticfiles import StaticFiles
 from financial_agent import FinancialAgent
 from app import fetch_company_cik_map
 import difflib
-import os  # ✅ 新增
 
 app = FastAPI()
 
-# ✅ 新增：托管插件文件
+# 插件文件托管
 app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
 CIK_MAP = fetch_company_cik_map()
 
@@ -31,7 +29,12 @@ def query_financials(req: CompanyRequest):
     agent = FinancialAgent(cik)
     df = agent.get_10k_xbrl_links()
 
-    lines = [f"✅ 查询到 {company_name.upper()}（CIK: {cik}）的 10-K 财报："]
+    if df.empty:
+        return PlainTextResponse(f"⚠️ 未找到 {company_name} 的任何 10-K 财报。")
+
+    lines = [f"✅ 查询到 {company_name}（CIK: {cik}）的财报链接："]
     for row in df.itertuples(index=False):
-        lines.append(f"- {row.year} ({row.filing_date}) → {row.url}")
+        # 对齐输出，年份为4位，→ 前保留两个空格
+        lines.append(f"{row.year:<4} ({row.filing_date})  → {row.url}")
+
     return PlainTextResponse("\n".join(lines))
