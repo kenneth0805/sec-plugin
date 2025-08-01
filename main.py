@@ -1,11 +1,17 @@
 from fastapi import FastAPI
+from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import PlainTextResponse
+from fastapi.staticfiles import StaticFiles  # ✅ 新增
 from financial_agent import FinancialAgent
 from app import fetch_company_cik_map
 import difflib
+import os  # ✅ 新增
 
 app = FastAPI()
+
+# ✅ 新增：托管插件文件
+app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
 CIK_MAP = fetch_company_cik_map()
 
 class CompanyRequest(BaseModel):
